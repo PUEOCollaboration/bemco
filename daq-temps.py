@@ -61,11 +61,13 @@ if 'BEMCO_CONNINFO' in os.environ:
 else:
     print("No psql conninfo, sorry")
 
+eye_counter = 0
 
 while True:
 
     devs = (0x60,) + turfios + surfs
-
+    print('------')
+    print(time.ctime())
     temps = {}
 
     for dev in devs:
@@ -85,8 +87,23 @@ while True:
                 curs.execute("INSERT INTO temperatures (time, device, sensor, temperature) values (NOW(), 'DAQ', '%s', %f);" % (k, temps[k]))
 
 
+    if (eye_counter % 60 == 0):
+        eye_gbe = hsk_harder(0x60,0x14,[0])
+        eye_tfio = hsk_harder(0x60,0x14,[1])
+
+        print("gbe eye")
+        print(repr(eye_gbe.data))
+        print("tfio eye")
+        print(repr(eye_tfio.data))
+        with open('eye_tfio_%s' % (time.strftime('%Y%m%d_%H%M%s')),'w') as feye:
+            feye.write(repr(eye_tfio.data))
+        with open('eye_gbe_%s' % (time.strftime('%Y%m%d_%H%M%s')),'w') as feye:
+            feye.write(repr(eye_gbe.data))
+
+
+    eye_counter +=1
+
+
     time.sleep(10)
-
-
 
 
