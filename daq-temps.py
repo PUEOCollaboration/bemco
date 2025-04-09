@@ -95,9 +95,9 @@ while True:
         print(eye_gbe.pretty())
         print("tfio eye")
         print(eye_tfio.pretty())
-        with open('eye_tfio_%s' % (time.strftime('%Y%m%d_%H%M%s')),'w') as feye:
+        with open('eye_tfio_%s' % (time.strftime('%Y%m%d_%H%M%S')),'w') as feye:
             feye.write(eye_tfio.pretty())
-        with open('eye_gbe_%s' % (time.strftime('%Y%m%d_%H%M%s')),'w') as feye:
+        with open('eye_gbe_%s' % (time.strftime('%Y%m%d_%H%M%S')),'w') as feye:
             feye.write(eye_gbe.pretty())
 
 
