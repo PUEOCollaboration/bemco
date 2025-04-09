@@ -92,13 +92,13 @@ while True:
         eye_tfio = hsk_harder(0x60,0x14,[1])
 
         print("gbe eye")
-        print(repr(eye_gbe.data))
+        print(eye_gbe.pretty())
         print("tfio eye")
-        print(repr(eye_tfio.data))
+        print(eye_tfio.pretty())
         with open('eye_tfio_%s' % (time.strftime('%Y%m%d_%H%M%s')),'w') as feye:
-            feye.write(repr(eye_tfio.data))
+            feye.write(eye_tfio.pretty())
         with open('eye_gbe_%s' % (time.strftime('%Y%m%d_%H%M%s')),'w') as feye:
-            feye.write(repr(eye_gbe.data))
+            feye.write(eye_gbe.pretty())
 
 
     eye_counter +=1
