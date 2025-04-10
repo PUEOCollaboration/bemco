@@ -91,9 +91,9 @@ static measurement_type_t powerana_map[11] =
 {
   { .label = "RF_OFF", .type = VOLTAGE },
   { .label = "RF_ON", .type = VOLTAGE },
-  { .label = "PV", .type = VOLTAGE, .scale = 3.39},
+  { .label = "BATTERY", .type = VOLTAGE, .scale = 3.39},
   { .label = "24V", .type = VOLTAGE },
-  { .label = "BATT", .type = VOLTAGE, .scale = 3.39},
+  { .label = "SOLAR", .type = VOLTAGE, .scale = 3.39},
   { .label = "12VA", .type = VOLTAGE },
   { .label = "12VA", .type = CURRENT },
   { .label = "12VB", .type = VOLTAGE },
