@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "libpq-fe.h"
+#include "nvml.h"
 
 double interval = 1;
-
 
 
 volatile int die = 0;
@@ -103,6 +103,7 @@ static char tstring[64];
 int main(int nargs, char ** args)
 {
 
+  signal(SIGINT, guillotine);
   char * conninfo=getenv("BEMCO_CONNINFO");
   if (!conninfo)
   {
@@ -110,6 +111,7 @@ int main(int nargs, char ** args)
     return 1;
   }
 
+  nvmlInit();
   pgsql = PQconnectdb(conninfo);
   bool dbok = (PQstatus(pgsql) == CONNECTION_OK);
   if (!dbok)
@@ -121,13 +123,29 @@ int main(int nargs, char ** args)
   signal(SIGINT, guillotine);
   probe();
 
+  nvmlDevice_t dev;
+  nvmlDeviceGetHandleByIndex(0, &dev);
+
   measure_callback_t callbacks[] = { print_callback, dbok ? psql_callback : NULL,  NULL };
   while(!die)
   {
+    static char gpu_buf[512];
 
     time_t t = time(NULL);
     strftime(tstring, sizeof(tstring), "%D %T", gmtime(&t));
     printf("Now is %s\n", tstring);
+
+    unsigned int temperature = 666;
+    nvmlDeviceGetTemperature(dev, NVML_TEMPERATURE_GPU, &temperature);
+    printf("GPU is %u\n", temperature);
+    if (dbok)
+    {
+      snprintf(gpu_buf,sizeof(gpu_buf),"insert into temperatures (time, device,sensor,temperature) values (NOW(), 'CPU','GPU',%u);",  temperature);
+      PGresult * r = PQexec(pgsql,gpu_buf);
+      if (PQresultStatus(r) != PGRES_COMMAND_OK) printf("%s\n", PQresultErrorMessage(r));
+      PQclear(r);
+    }
+
 
     measure(callbacks);
 
